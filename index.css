@@ -1,0 +1,21 @@
+
+body {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    background-color: #EEE;
+}
+
+#content {
+    width: 1024px;
+    margin: 0 auto;
+}
+
+#text, #text2 {
+    font-size: 2em;
+}
+
+img {
+    text-align: center;
+    height: 500px;
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Enää 80 tuntia töitä jäljellä</title>
+    <link rel="stylesheet" href="index.css" />
+</head>
+
+<body>
+    <div id="content">
+        <p id="text">Huomenta! Se ois enää <strong id="days">200</strong> päivää jäljellä ennen eläkettä! Ota tästä inspiroiva eläkemeemi!</p>
+        <img src="img/retirement1.jpg" alt="eläköityminen" id="img"/>
+    </div>
+    <script>
+        var update = function () {
+            document.getElementById("img").src = "img/retirement" + Math.floor(Math.random() * 10 + 1)  + ".jpg";
+            var retireDate = new Date(2022, 3, 7);
+            var days = Math.floor((retireDate - new Date()) / 1000 / 3600 / 24);
+            document.getElementById("days").innerHTML = days;
+        };
+        window.onload = update;
+    </script>
+</body>
