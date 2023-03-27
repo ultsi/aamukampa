@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Sumplete</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A logic puzzle game invented by artificial intelligence"
+    />
+    <meta charset="UTF-8" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="114x114"
+      href="/apple-icon-114x114.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="/apple-icon-120x120.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="144x144"
+      href="/apple-icon-144x144.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="/apple-icon-152x152.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/apple-icon-180x180.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/android-icon-192x192.png"
+    />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <style>
+      body {
+        padding: 10px;
+        font-family: "-apple-system", "Clear Sans", "Helvetica Neue", Arial,
+          sans-serif;
+        margin: auto;
+        max-width: 500px;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+        font-size: 20px;
+        background: #f5f5f5;
+      }
+
+      h1 {
+        margin-top: 0px;
+        margin-bottom: 10px;
+        font-size: 22px;
+      }
+
+      h2 {
+        margin-top: 0px;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .grid {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        user-select: none;
+        margin-top: 20px;
+      }
+
+      .cell {
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 700;
+      }
+
+      .number {
+        cursor: pointer;
+        font-weight: 500;
+        border: 1px solid black;
+        background: white;
+      }
+
+      .circle {
+        position: relative;
+      }
+
+      .circle::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 90%;
+        height: 90%;
+        border: 7px solid #6fbd6fa8;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        box-sizing: border-box;
+      }
+
+      .delete {
+        position: relative;
+      }
+
+      .delete::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120%;
+        height: 120%;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff0000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Cline x1='18' y1='6' x2='6' y2='18' /%3E%3Cline x1='6' y1='6' x2='18' y2='18' /%3E%3C/svg%3E");
+        opacity: 20%;
+      }
+
+      .hint {
+        position: relative;
+      }
+
+      .hint::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120%;
+        height: 120%;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000fff' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Cline x1='18' y1='6' x2='6' y2='18' /%3E%3Cline x1='6' y1='6' x2='18' y2='18' /%3E%3C/svg%3E");
+        opacity: 20%;
+      }
+
+      .vanswer {
+        color: #aba2a2;
+        border-top: 1px solid black;
+      }
+
+      .hanswer {
+        color: #aba2a2;
+        border-left: 1px solid black;
+      }
+
+      .canswer {
+        color: #aba2a2;
+      }
+
+      .correct {
+        color: black;
+      }
+
+      .mistake {
+        background-color: #ffa6a6;
+      }
+
+      select,
+      button {
+        min-width: 50px;
+        cursor: pointer;
+        height: 50px;
+        border: 2px solid black;
+        font-weight: 700;
+        text-align: center;
+        border-radius: 10px;
+        background-color: #e5e5e5;
+        color: black;
+        -webkit-border-radius: 10px;
+        font-size: 16px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      select,
+      button:focus {
+        outline: none;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .credits {
+        border-top: 2px solid #e5e5e5;
+        padding-top: 10px;
+        margin-top: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        color: grey;
+      }
+
+      a {
+        color: grey;
+      }
+    </style>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("sw.js")
+          .then((registration) => console.log("Service worker registered"))
+          .catch((error) =>
+            console.log("Service worker registration failed:", error)
+          );
+      }
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-KW0289X9BZ"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-KW0289X9BZ");
+    </script>
+  </head>
+  <body>
+    <h1>Sumplete</h1>
+    <h2>
+      Delete numbers so each row/column adds up to the target number at the
+      right/bottom.
+    </h2>
+
+    <div id="loadgame">
+      <div class="grid" id="grid"></div>
+      <div class="controls">
+        <button id="mistakes">Errors</button>
+        <button id="hint">Hint</button>
+        <button id="restart">Restart</button>
+        <button id="reveal">Reveal</button>
+        <button id="remove" class="hidden">Remove mistakes</button>
+      </div>
+      <h2 class="complete hidden">Puzzle solved! Well done</h2>
+      <h2 class="revealed hidden">Better luck next time!</h2>
+      <div class="new hidden">
+        <select id="size">
+          <option value="3">3x3 (beginner)</option>
+          <option value="4">4x4 (easy)</option>
+          <option value="5">5x5 (intermediate)</option>
+          <option value="6">6x6 (challenging)</option>
+          <option value="7">7x7 (advanced)</option>
+          <option value="8">8x8 (expert)</option>
+          <option value="9">9x9 (master)</option>
+        </select>
+        <button id="new">New puzzle</button>
+        <button id="invite">Invite a friend to try Sumplete!</button>
+      </div>
+    </div>
+
+    <div class="credits">
+      Sumplete was invented and coded by AI ChatGPT 🤖 (<a href="about">about</a
+      >)
+    </div>
+    <script>
+      gridsize = 4;
+      numbersize = gridsize - 1;
+      document.getElementById("size").value = numbersize;
+
+      const loadGame = document.getElementById("loadgame");
+
+      if (localStorage.getItem("loadgame") !== null) {
+        loadgame.innerHTML = localStorage.getItem("loadgame");
+        numbersize = document.querySelectorAll(".hanswer").length;
+        gridsize = numbersize + 1;
+        document.getElementById("size").value = numbersize;
+      } else {
+        generate();
+      }
+
+      // Generate new puzzle
+      function generate() {
+        const grid = document.getElementById("grid");
+        for (let i = 0; i < gridsize * gridsize; i++) {
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+          grid.appendChild(cell);
+        }
+
+        for (let i = 0; i <= numbersize - 1; i++) {
+          let prevr, easyrow;
+          if (!easyrow && Math.random() < 0.3) {
+            easyrow = true;
+          }
+          for (let j = 0; j <= numbersize - 1; j++) {
+            let r = Math.floor(Math.random() * 9) + 1;
+            if (r === prevr) {
+              r = Math.floor(Math.random() * 9) + 1;
+            }
+            prevr = r;
+            let index = i * gridsize + j;
+            let cell = grid.children[index];
+
+            cell.textContent = r;
+            cell.classList.add("number");
+            if (Math.random() < (easyrow ? 0.1 : 0.5)) {
+              cell.classList.add("circle", "solution");
+            }
+          }
+          easyrow = false;
+        }
+        // prefill in the case of gridsize > 7
+        const corners = [
+          [1, 1],
+          [1, gridsize - 3],
+          [gridsize - 3, 1],
+          [gridsize - 3, gridsize - 3],
+        ];
+
+        for (let i = 0; i < corners.length; i++) {
+          const [row, col] = corners[i];
+          const cellIndex = row * gridsize + col;
+
+          // Mark neighboring cells with class "circle"
+          const cornerCell = grid.children[cellIndex];
+          cornerCell.classList.add("circle", "solution");
+        }
+
+        // right
+        for (let i = 0; i <= numbersize - 1; i++) {
+          let sum = 0;
+          for (let j = 0; j <= numbersize - 1; j++) {
+            let index = i * gridsize + j;
+            let cell = grid.children[index];
+            if (cell.classList.contains("circle")) {
+              sum += parseInt(cell.textContent);
+            }
+          }
+          let index = i * gridsize + (gridsize - 1);
+          let cell = grid.children[index];
+          cell.textContent = sum;
+          cell.classList.add("hanswer");
+        }
+
+        // down
+        for (let j = 0; j <= numbersize - 1; j++) {
+          let sum = 0;
+          for (let i = 0; i <= numbersize - 1; i++) {
+            let index = i * gridsize + j;
+            let cell = grid.children[index];
+            if (cell.classList.contains("circle")) {
+              sum += parseInt(cell.textContent);
+            }
+          }
+          let index = numbersize * gridsize + j;
+          let cell = grid.children[index];
+          cell.textContent = sum;
+          cell.classList.add("vanswer");
+        }
+
+        // corner
+        let sum = 0;
+        for (let j = 0; j <= numbersize - 1; j++) {
+          let index = j * gridsize + j;
+          let cell = grid.children[index];
+          if (cell.classList.contains("circle")) {
+            sum += parseInt(cell.textContent);
+          }
+        }
+        let cornerIndex = numbersize * gridsize + numbersize;
+        let cornerCell = grid.children[cornerIndex];
+        cornerCell.textContent = sum;
+        cornerCell.classList.add("canswer");
+
+        Array.from(grid.children).forEach((cell) =>
+          cell.classList.remove("circle")
+        );
+
+        for (let i = 0; i < corners.length; i++) {
+          const [row, col] = corners[i];
+          const cellIndex = row * gridsize + col;
+
+          // Mark neighboring cells with class "circle"
+          const cornerCell = grid.children[cellIndex];
+          cornerCell.classList.add("circle");
+        }
+
+        grid.style.height = grid.offsetWidth + "px";
+        const cellWidth = "calc(100% / " + gridsize + ")";
+        Array.from(grid.children).forEach((cell) => {
+          cell.style.width = cellWidth;
+          cell.style.height = cellWidth;
+        });
+
+        const style1 = document.createElement("style");
+        style1.type = "text/css";
+        style1.innerHTML = `.number:nth-child(${gridsize}n+1) { border-left: 2px solid black; }`;
+        document.getElementById("grid").appendChild(style1);
+
+        const style2 = document.createElement("style");
+        style2.type = "text/css";
+        style2.innerHTML = `.number:nth-child(-n+${gridsize}) { border-top: 2px solid black; }`;
+        document.getElementById("grid").appendChild(style2);
+
+        check();
+      }
+
+      // Check rows and columns
+      function check() {
+        const grid = document.getElementById("grid");
+
+        // Check rows
+        for (let i = 0; i < gridsize - 1; i++) {
+          let sum = 0;
+          for (let j = 0; j < gridsize - 1; j++) {
+            let index = i * gridsize + j;
+            let cell = grid.children[index];
+            if (!cell.classList.contains("delete")) {
+              sum += parseInt(cell.textContent);
+            }
+          }
+          let index = i * gridsize + (gridsize - 1);
+          let cell = grid.children[index];
+          if (sum == parseInt(cell.textContent)) {
+            cell.classList.add("correct");
+          } else {
+            cell.classList.remove("correct");
+          }
+        }
+        // Check columns
+        for (let j = 0; j < gridsize - 1; j++) {
+          let sum = 0;
+          for (let i = 0; i < gridsize - 1; i++) {
+            let index = i * gridsize + j;
+            let cell = grid.children[index];
+            if (!cell.classList.contains("delete")) {
+              sum += parseInt(cell.textContent);
+            }
+          }
+          let index = numbersize * gridsize + j;
+          let cell = grid.children[index];
+          if (sum == parseInt(cell.textContent)) {
+            cell.classList.add("correct");
+          } else {
+            cell.classList.remove("correct");
+          }
+        }
+
+        // Check corner
+        let sum = 0;
+        for (let j = 0; j <= numbersize - 1; j++) {
+          let index = j * gridsize + j;
+          let cell = grid.children[index];
+          if (!cell.classList.contains("delete")) {
+            sum += parseInt(cell.textContent);
+          }
+        }
+        let cornerIndex = numbersize * gridsize + numbersize;
+        let cornerCell = grid.children[cornerIndex];
+        if (sum == parseInt(cornerCell.textContent)) {
+          cornerCell.classList.add("correct");
+        } else {
+          cornerCell.classList.remove("correct");
+        }
+
+        // Check if puzzle complete
+        const correctCells = document.querySelectorAll(".correct");
+        if (correctCells.length == numbersize * 2 + 1) {
+          Array.from(document.querySelectorAll(".number:not(.delete)")).forEach(
+            (cell) => cell.classList.add("circle")
+          );
+          document.querySelector(".complete").classList.remove("hidden");
+          document.querySelector(".new").classList.remove("hidden");
+          document.querySelector(".controls").classList.add("hidden");
+        }
+
+        localStorage.setItem("loadgame", loadgame.innerHTML);
+      }
+
+      // Number clicks
+      const grid = document.getElementById("grid");
+      grid.addEventListener("click", function (e) {
+        const target = e.target;
+        if (!target.classList.contains("number")) {
+          return;
+        }
+
+        if (
+          !document.querySelector(".complete").classList.contains("hidden") ||
+          !document.querySelector(".revealed").classList.contains("hidden")
+        ) {
+          return;
+        }
+
+        if (target.classList.contains("hint")) {
+          return;
+        }
+
+        // Set state of cell
+        if (target.classList.contains("mistake")) {
+          target.classList.remove("circle", "delete", "mistake");
+        } else if (target.classList.contains("delete")) {
+          target.classList.remove("delete");
+          target.classList.add("circle");
+        } else if (target.classList.contains("circle")) {
+          target.classList.remove("circle");
+        } else {
+          target.classList.add("delete");
+        }
+
+        // Hide remove if no more mistakes
+        const mistakes = document.querySelectorAll(".mistake");
+        if (mistakes.length == 0) {
+          document.getElementById("remove").classList.add("hidden");
+        }
+
+        check();
+      });
+
+      // Show mistakes
+      document
+        .getElementById("mistakes")
+        .addEventListener("click", function () {
+          const grid = document.getElementById("grid");
+          Array.from(grid.querySelectorAll(".solution.delete")).forEach(
+            (cell) => cell.classList.add("mistake")
+          );
+          Array.from(grid.querySelectorAll(".circle:not(.solution)")).forEach(
+            (cell) => cell.classList.add("mistake")
+          );
+          if (grid.querySelectorAll(".mistake").length > 0) {
+            document.getElementById("remove").classList.remove("hidden");
+          }
+          localStorage.setItem("loadgame", loadgame.innerHTML);
+        });
+
+      // Show hint
+      document.getElementById("hint").addEventListener("click", function () {
+        const grid = document.getElementById("grid");
+        const availableCells = Array.from(
+          grid.querySelectorAll(
+            ".number:not(.solution):not(.hint):not(.delete)"
+          )
+        );
+        const randomIndex = Math.floor(Math.random() * availableCells.length);
+        availableCells[randomIndex].classList.add("hint", "delete");
+        check();
+      });
+
+      // Remove mistakes
+      document.getElementById("remove").addEventListener("click", function () {
+        const grid = document.getElementById("grid");
+        Array.from(grid.querySelectorAll(".mistake")).forEach((cell) =>
+          cell.classList.remove("mistake", "circle", "delete")
+        );
+        document.getElementById("remove").classList.add("hidden");
+        check();
+      });
+
+      // Reveal solution
+      document.getElementById("reveal").addEventListener("click", function () {
+        if (
+          confirm(
+            "Are you sure you want to reveal the solution to this puzzle?"
+          )
+        ) {
+          const grid = document.getElementById("grid");
+          Array.from(grid.querySelectorAll(".number")).forEach((cell) =>
+            cell.classList.remove("circle", "delete", "mistake")
+          );
+          Array.from(grid.querySelectorAll(".solution")).forEach((cell) =>
+            cell.classList.add("circle")
+          );
+          Array.from(grid.querySelectorAll(".number:not(.solution)")).forEach(
+            (cell) => cell.classList.add("delete")
+          );
+          document
+            .querySelectorAll(".hanswer")
+            .forEach((cell) => cell.classList.add("correct"));
+          document
+            .querySelectorAll(".vanswer")
+            .forEach((cell) => cell.classList.add("correct"));
+          document.querySelector(".revealed").classList.remove("hidden");
+          document.querySelector(".new").classList.remove("hidden");
+          document.querySelector(".controls").classList.add("hidden");
+          localStorage.setItem("loadgame", loadgame.innerHTML);
+        }
+      });
+
+      // Restart puzzle
+      document.getElementById("restart").addEventListener("click", function () {
+        if (confirm("Are you sure you want to restart this puzzle?")) {
+          const grid = document.getElementById("grid");
+          Array.from(grid.children).forEach((cell) =>
+            cell.classList.remove(
+              "hint",
+              "correct",
+              "circle",
+              "delete",
+              "mistake"
+            )
+          );
+          document.querySelector(".complete").classList.add("hidden");
+          document.querySelector(".revealed").classList.add("hidden");
+          document.querySelector(".new").classList.add("hidden");
+          document.querySelector(".controls").classList.remove("hidden");
+          check();
+        }
+      });
+
+      // New puzzle
+      document.getElementById("new").addEventListener("click", function () {
+        localStorage.removeItem("loadgame");
+        document.getElementById("grid").innerHTML = "";
+        document.querySelector(".complete").classList.add("hidden");
+        document.querySelector(".revealed").classList.add("hidden");
+        document.querySelector(".new").classList.add("hidden");
+        document.querySelector(".controls").classList.remove("hidden");
+        gridsize = parseInt(document.getElementById("size").value) + 1;
+        numbersize = gridsize - 1;
+        generate();
+      });
+
+      document.getElementById("invite").addEventListener("click", function () {
+        const inviteMessage =
+          "Have you tried this new logic puzzle game? - https://sumplete.com";
+
+        // Check if Web Share API is supported
+        if (navigator.share) {
+          navigator.share({
+            text: inviteMessage,
+          });
+        } else {
+          // Web Share API not supported, copy invite message to clipboard
+          const inviteInput = document.createElement("input");
+          inviteInput.setAttribute("value", inviteMessage);
+          document.body.appendChild(inviteInput);
+          inviteInput.select();
+          document.execCommand("copy");
+          document.body.removeChild(inviteInput);
+          alert("Invite message copied to clipboard.");
+        }
+      });
+
+      // Prevent double click zoom
+      document.addEventListener(
+        "dblclick",
+        function (e) {
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+    </script>
+  </body>
+</html>
